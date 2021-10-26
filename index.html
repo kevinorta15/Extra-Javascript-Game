@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Gamedev Canvas Workshop</title>
+    <style>
+        * { padding: 0; margin: 0; }
+        canvas { background: #eee; display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="500" height="500"></canvas>
+
+
+<script>
+    //Necessary in EVERY Canvas project
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    // JavaScript code goes here
+    // Code that gives position
+    var x = canvas.width/2;
+    var y = canvas.height-30;
+    var dx = 2;
+    var dy = -2;
+    var ballRadius = 10;
+    var colors = ['blue', 'green', 'red', 'yellow']
+
+    function randomColor(colors) {
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
+randomColor();
+    console.log(randomColor);
+
+    function drawBall() {
+        ctx.beginPath();
+        // ctx.arc(x, y, 10, 0, Math.PI*2);
+        ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function draw() {
+        //clears the ball line, so it doesn't leave a trail
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBall();
+        x += dx;
+        y += dy;
+        //Controls the bouncing effect of the balls from all edges of the canvas, from the edge of the circumf.
+        if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
+            // ctx.fillStyle = randomColor();
+            dx = -dx;
+        }
+        if(y + dy > canvas.height-ballRadius || y + dy < ballRadius) {
+            // ctx.fillStyle = randomColor();
+            dy = -dy;
+        }
+    }
+    setInterval(draw, 10);
+
+
+</script>
+
+</body>
+</html>
