@@ -24,13 +24,43 @@
     var dx = 2;
     var dy = -2;
     var ballRadius = 10;
-    var colors = ['blue', 'green', 'red', 'yellow']
+    var colors = ["blue", "green", "red", "yellow"]
+    //Paddle to control, bounce ball off of
+    var paddleHeight = 10;
+    var paddleWidth = 75;
+    var paddleX = (canvas.width-paddleWidth) / 2;
+    var rightPressed = false;
+    var leftPressed = false;
 
+    //Since keys aren't pressed at first, start with false, then as pressed, change to true in function
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+
+    function keyDownHandler(e) {
+        if(e.key == "Right" || e.key == "ArrowRight") {
+            rightPressed = true;
+        }
+        else if(e.key == "Left" || e.key == "ArrowLeft") {
+            leftPressed = true;
+        }
+    }
+
+    function keyUpHandler(e) {
+        if(e.key == "Right" || e.key == "ArrowRight") {
+            rightPressed = false;
+        }
+        else if(e.key == "Left" || e.key == "ArrowLeft") {
+            leftPressed = false;
+        }
+    }
+
+
+    //gives random colors, from the array of colors that I have given above
     function randomColor(colors) {
         return colors[Math.floor(Math.random() * colors.length)];
     }
-randomColor();
-    console.log(randomColor);
+// randomColor(colors);
+    console.log(randomColor(colors));
 
     function drawBall() {
         ctx.beginPath();
@@ -41,22 +71,49 @@ randomColor();
         ctx.closePath();
     }
 
+    function drawPaddle() {
+        ctx.beginPath();
+        ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath();
+    }
+
     function draw() {
         //clears the ball line, so it doesn't leave a trail
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawBall();
+        drawPaddle();
         x += dx;
         y += dy;
         //Controls the bouncing effect of the balls from all edges of the canvas, from the edge of the circumf.
         if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
-            // ctx.fillStyle = randomColor();
+            // ctx.fillStyle = randomColor(colors);
+            //trying to change color of ball every time it hits wall
+            // Math.floor(Math.random() * colors.length)
             dx = -dx;
         }
         if(y + dy > canvas.height-ballRadius || y + dy < ballRadius) {
-            // ctx.fillStyle = randomColor();
+            // ctx.fillStyle = randomColor(colors);
             dy = -dy;
         }
+//Controls paddles, goes left and right
+        if(rightPressed) {
+            paddleX += 7;
+            if (paddleX + paddleWidth > canvas.width){
+                paddleX = canvas.width - paddleWidth;
+            }
+        }
+        else if(leftPressed) {
+            paddleX -= 7;
+            if (paddleX < 0){
+                paddleX = 0;
+            }
+        }
+
     }
+
+
     setInterval(draw, 10);
 
 
