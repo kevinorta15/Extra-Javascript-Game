@@ -31,6 +31,24 @@
     var paddleX = (canvas.width-paddleWidth) / 2;
     var rightPressed = false;
     var leftPressed = false;
+    //Defined the number of rows and columns of bricks , their width and height, the padding between the bricks so they won't touch each other
+    var brickRowCount = 4;
+    var brickColumnCount = 5;
+    var brickWidth = 75;
+    var brickHeight = 20;
+    var brickPadding = 10;
+    var brickOffsetTop = 30;
+    var brickOffsetLeft = 30;
+    var bricks = [];
+    //loop through the rows and columns and create the new bricks
+    for(var c=0; c<brickColumnCount; c++) {
+        bricks[c] = [];
+        for(var r=0; r<brickRowCount; r++) {
+            bricks[c][r] = { x: 0, y: 0 };
+        }
+    }
+
+
 
     //Since keys aren't pressed at first, start with false, then as pressed, change to true in function
     document.addEventListener("keydown", keyDownHandler, false);
@@ -78,10 +96,28 @@
         ctx.fill();
         ctx.closePath();
     }
+//Draws bricks, without coordinate such as (0,0)
+    function drawBricks() {
+        for(var c=0; c<brickColumnCount; c++) {
+            for(var r=0; r<brickRowCount; r++) {
+                var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+                var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+                bricks[c][r].x = brickX;
+                bricks[c][r].y = brickY;
+                ctx.beginPath();
+                ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                ctx.fillStyle = "#0095DD";
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+    }
+
 
     function draw() {
         //clears the ball line, so it doesn't leave a trail
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBricks();
         drawBall();
         drawPaddle();
         x += dx;
@@ -93,28 +129,34 @@
             // Math.floor(Math.random() * colors.length)
             dx = -dx;
         }
-        if(y + dy > canvas.height-ballRadius || y + dy < ballRadius) {
-            // ctx.fillStyle = randomColor(colors);
+        //Instead of ball being able to hit all 4 corners, now if it hits bottom, without radius of ball touching panel, it will alert, "GAME OVER"
+        if(y + dy < ballRadius) {
             dy = -dy;
-        }
-//Controls paddles, goes left and right
-        if(rightPressed) {
-            paddleX += 7;
-            if (paddleX + paddleWidth > canvas.width){
-                paddleX = canvas.width - paddleWidth;
+        } else if(y + dy > canvas.height-ballRadius) {
+            if(x > paddleX && x < paddleX + paddleWidth) {
+                dy = -dy;
             }
-        }
-        else if(leftPressed) {
-            paddleX -= 7;
-            if (paddleX < 0){
-                paddleX = 0;
+            else {
+                alert("GAME OVER");
+                document.location.reload();
+                clearInterval(interval);
             }
         }
 
+//Controls paddles, goes left and right
+        if(rightPressed && paddleX < canvas.width-paddleWidth) {
+            paddleX += 7;
+        }
+        else if(leftPressed && paddleX > 0) {
+            paddleX -= 7;
+        }
+
+        x += dx;
+        y += dy;
     }
 
 
-    setInterval(draw, 10);
+    var interval = setInterval(draw, 10);
 
 
 </script>
